@@ -1,0 +1,9 @@
+Communication Strategies between services
+
+Sync : Service communicate with each other using direct requests
+Async : Services communicate with each other using events
+
+Sync Communication: It is easy to use but there is still problems with dependency between services. If one crash it can effects the service.
+Also the entire request is only as fast as the slowest request
+
+Event Based Communication: request event send by event bus and the response data also created with event and send with event bus. Same problems in sync communication occur.
