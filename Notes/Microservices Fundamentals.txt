@@ -71,3 +71,13 @@ we use selector inside of posts-srv in the purpose of find the pods that has pos
 we can get nodePort by kubectl get services
 Docker for Mac/Windows -> localhost:3xxxx/posts
 Docker Toolbox with Minikube -> <some_ip>:3xxxx/posts
+
+Building a deployment for the Event Bus
+- Build an image for the Event Bus
+- Push the image to Dokcer hub
+- Create a deployment for Event Bus
+- Create a Cluster IP service for Event Bus and posts
+- Wire it all up!
+
+How to communicate between services
+we will change Req to "http://event-bus-srv:4005"
