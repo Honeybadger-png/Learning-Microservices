@@ -1,0 +1,134 @@
+when i write docker run hello-world it couldnt find a image because it was empty. Then it tried to reach out docker hub for public images.
+and downloaded hello-world file to image cache.
+
+Image: single file with all the deps and config required to run a program.
+Container is instance of an image. Runs a program.
+
+Namespacing: Isolating resources per process(or group of processes) when a specific process is ask for resource it will be directed to the area.
+Control Groups(cgroups): Limit amount of resources used per process.
+
+Image has like FS snapshot as an example chrome andp python and the startup command. And in the container, FS snapshot is placed in an specific area inside of hard drive
+after the process is passed to kernel.
+
+Namespacing and Con groups method belongs to linux. And when we download docker process running in linux virtual machine.
+
+Creating and running a container from an Image : docker(reference the docker client) run(try to create and run a container) <image name>(Name of image to use for this container)
+
+Overriding Default commands
+docker run <iamge-name> command!
+List all running containers
+docker -> ps
+docker -> ps --all creates random name mine was like magical_borg
+**Container lifecycle**
+docker run = (docker create) + (docker start)
+docker create hello-world returns a long value and its an id of the container that created
+docker start -a <long-id> and you can see the message -a watch for output
+
+Restarting stopped containers
+docker start -a <container-id>
+Removing stopped containers
+docker system prune  this will remove - all stopped containers - all networks not used by at least one container - all dangling images - all build cache
+
+Retrieving output logs
+docker logs <container id>
+Stopping containers
+docker stop <container id> or docker kill <container id>
+Multi-command containers
+redis-cli -> redis-server
+Execute an additional command in a container
+docker exec -it <container id> <command> kicked without "-it"
+The purpose of "it" flag : its combination of  -i -t flags -i make sure any stuff i type gets directed to STDIN in redis-cli -t make text pretty and it has some other affect
+
+dcoker exec -it <container id> sh -> full terminal access
+
+docker run -it busybox sh startup a container in a busybox image and attach STDIN to shell
+
+container are isolated with each other unless we set up some connection
+
+Creating docker images**:
+    dockerfile -> docker client -> docker server- usable image
+
+!!--Using the progress flag to see more verbose output: in section 4. you will want to pass the progress flag to the build command:
+    docker build --progress=plain
+    additionally you can pass the no-cache flag to disable caching
+    Do not try to use the no-cache flag with lecture 47
+
+Create an image that runs redis-server.
+
+Writing a dockerfile == Being given a computer with no OS and being told to install Chrome
+we used alpine as a base image like using Windows , Ubuntu etc.
+
+The build process in detail
+-> when docker saw run configiration it looked back last step FROM alpine image was alpine and took that image and created a temporary container,
+after that command apk add --update redis executed the process. 
+after that  stopped the container entirely and updated image with the id 
+and last step with cmd setting primary command and removing the container and takes snapshot of the container (says in the course but in my envirenment there was 2 step)
+
+with RUN apk add --update gcc there will be gcc in the image 
+and docker used cache for redis because it already executed same thing.after that saw new gcc and decided we cant use cache and do all the stuff.
+if order isnt change, cache is used.
+
+docker build -t <Your docker id> / <repo/project name> : <version>
+e.g: docker build -t stephengrider/redis:latest .  
+
+Manuel image generation with Docker commit :
+- docker run -it alpine sh
+- apk add --update redis
+- second terminal window docker ps get the id 
+- docker commit -c 'CMD ["redis-server"]'  (if it gives error in Windows (Fuck Microsoft Fuck!!!) try "CMD['redis-server']") <runnind container id>
+
+you dont have to copy all the id just copy a segment of it and run docker run <id> 
+
+-- This part will be the notes for the project part of dockerization --
+- Project Outline Create Node JS web app
+- Create a dockerfile
+- Build image from dockerfile
+- Run image as container
+- Connect to web app from a browser
+
+- create Dockerfile and specify base image
+- FROM alpine
+- RUN npm install
+- CMD ["npm","start"]
+ERROR: npm:not found
+
+!! need to specify node:14-alpine 
+If you do not specify a Node version, you will meet a number of errors caused by changes in the newest versions of Node:
+npm ERR! idealTree already exists
+This can be resolved by adding WORKDIR right after the FROM instruction
+e.g: WORKDIR /usr/app
+
+1. Approach we will use a public image that have node and npm already installed.
+
+saveError: no such file or directory, open '/package.json'
+because there is no file called package.json in the image that came FROM 
+
+Copying Build Files:
+- COPY ./(Path to folder to copy from on *your machine* relative to build context) ./(Place to copy stuff to inside *the container*)
+
+- above RUN npm install
+- COPY ./ ./
+Tag the containers
+- docker build -t mertgul/simpleweb .
+
+But we cant reach out the web application
+
+Container Port Forwarding
+- docker run -p 8080(Route incoming requests to this port on local host to...):8080(...this port inside the container)  <image name>
+Specifying a working directory
+- we will copy files in a nested directory
+- *under the FROM in the docker file*
+- *WORKDIR /usr/app*
+
+second terminal window 
+- docker exec -it <id of a container> sh
+- it will enter directly to /usr/app
+!!if we want to update the app file we should add some extra thing to the docker file !!
+when we make change docker saw a change after the change it will agan run  npm install
+
+Minimizing cache busting and rebuilds
+- we change COPY ./ ./ -> ./package.json ./
+- after npm install COPY ./ ./
+
+
+
