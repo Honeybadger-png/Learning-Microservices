@@ -81,3 +81,55 @@ Building a deployment for the Event Bus
 
 How to communicate between services
 we will change Req to "http://event-bus-srv:4005"
+
+**Load Balancer Service**
+
+React app will reach out to the load balancer and the request will be sent to appropriate pod response also follows the same route
+
+Load Balancer Service: Tells Kubernetes to reach out to its provider and provision a load balancer. Gets traffic in to a single pod
+Ingress or Ingress Controller : A pod with a set of routing rules to distribute traffic to other services
+Outside world send request to load balancer and load balancer send its to Ingress Controller and There will be set of rules. So Ingress Controller send request to exact 
+pod(cluster ip) Based on the route or the rules.
+
+Skaffold Tool 
+- Automates many tasks in a Kubernetes dev environment
+- Makes it really easy to updae code in a running pod
+- Makes it really easy to create/delete all objects tied to a project at once
+- Skaffold.dev
+Skaffold API version Update
+
+The v2Alpha3 API version of Skaffold that is used in the course is a few versions behind. Based on all of our recent testing this should still be supported and work without any errors or issues.
+
+skaffold schema list will return the API versions that are supported by the version of Skaffold you have installed.
+
+That said, some students may want to upgrade their skaffold config. There is a very easy way to do this by just running skaffold fix from your terminal:
+
+https://skaffold.dev/docs/references/cli/#skaffold-fix
+
+This will print an updated version of your Skaffold config to the terminal so that you can copy-paste or review and update as needed. This will not automatically update or modify your existing file.
+
+The main difference between the two APIs is that the deploy and kubectl fields no longer exist:
+
+apiVersion: skaffold/v2alpha3
+kind: Config
+deploy:
+  kubectl:
+    manifests:
+      - ./infra/k8s/*
+...
+Should now be written as:
+
+apiVersion: skaffold/v4beta3
+kind: Config
+manifests:
+  rawYaml:
+    - ./infra/k8s/*
+...
+You can find the full updated code attached to the next lecture as a zip file.
+
+after installation we create skaffold.yaml file and write some config
+then we simply write skaffol dev in command line volaa now we dont have to build new image, push and write rollout command
+there is two level of restarting because of nodemon just restart the app when the code changes and skallfold also do the same thing
+so if you use just node to create your app changes will not work.
+
+there will be challenges when changing somefile and it will not affect we will see in the next lectures to solve that kind of problems.

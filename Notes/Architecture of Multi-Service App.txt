@@ -1,0 +1,7 @@
+Painful Things From App #1
+- Lots of duplicated code!
+- Really hard to picture the flow of events between services
+- Really hard to remembet what properties an event should have
+- Really hard to test some event flows
+- My machine is getting laggy running kubernetes and everything else...
+- what if someone created a comment after editing 5 others after editing a post while balancing on a tight rope...

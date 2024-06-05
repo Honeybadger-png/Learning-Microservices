@@ -7,7 +7,7 @@ const App = () => {
   return (
     <div className='font-poppins m-5 '>
       <div className='pb-10'>
-        <h1 className='font-bold'>Create Post</h1>
+        <h1 className='font-bold'>Create Post!!!!!</h1>
         <PostCreate/>
       </div>
       <div>

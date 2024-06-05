@@ -1,0 +1,52 @@
+we are using ingress-nginx
+
+kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/controller-v1.10.1/deploy/static/provider/cloud/deploy.yaml
+
+Ingress v1 API Required Update + pathType Warning
+1. A pathType needs to be added
+2. How we specify the backend service name and port has changed
+3. The kubernetes.io/ingress.class annotation should be removed and replaced by the ingressClassName field under the specify
+Cannot be used with pathType Prefix Warning
+You can use the ImplementationSpecific pathType as explained in the updated docs:
+https://kubernetes.github.io/ingress-nginx/user-guide/nginx-configuration/configmap/#strict-validate-path-pathType
+So,for any path that makes use of a regex, you would use ImplementationSpecific instead of Prefix.
+
+eg:
+    - path: /posts/?(.*)/comments
+      pathType: ImplementationSpecific
+
+
+Important Note About Port 80
+we will be editing our hosts file so that we can access posts.com/posts in our browser. If you are unable to access the application you may have something already running on port 80
+which is the default port for the ingress.
+Before doing anything, make sure you have properly installed the ingress-nginx controller for your particular Kubernetes client.
+after that you'll need to identify if something is running on port 80 and shut it down. Some students have even had application. from other courses or personal projects still running.
+For Windows Pro users, both SQL Server Reporting Services and the World Wide Web Publishing Service / IIS Server have been the most common services causing a conflict.
+Windows:
+Using Powershell
+netstat -anb
+If Docker is properly listening on Port 80 you should see:
+TCP 0.0.0.0:80 0.0.0.0 listening
+[com.docker.backend.exe]
+If something else is listed for TCP 0.0.0.0:80, you'll need to shut that service down.
+
+
+create-react-app currentl has two bugs that prevent it from running correctly in a docker container
+To solve this, we have to add two environment variable to the dockerfile in the client folder
+
+FROM node:alpine
+add this
+ENV CI=true
+ENV WDS_SOCKET_PORT = 0
+
+Routing
+ingress-srv.yaml
+
+we dont have enough information in ingress for methods like POST , GET...
+we need to change routes
+we changed posts create request in the client to posts.com/posts/create
+(manually building pushing and rolling out the changes is painful so i will learn a quick way later in the course)
+
+now time to write routing to ingress controller
+
+need to put /?(.*) path at the end otherwise it will always go to the related pod 
