@@ -1,7 +1,36 @@
 Painful Things From App #1
-- Lots of duplicated code!
-- Really hard to picture the flow of events between services
-- Really hard to remembet what properties an event should have
-- Really hard to test some event flows
-- My machine is getting laggy running kubernetes and everything else...
-- what if someone created a comment after editing 5 others after editing a post while balancing on a tight rope...
+1. Lots of duplicated code!
+2. Really hard to picture the flow of events between services
+3. Really hard to remember what properties an event should have
+4. Really hard to test some event flows
+5. My machine is getting laggy running kubernetes and everything else...
+6. what if someone created a comment after editing 5 others after editing a post while balancing on a tight rope...
+
+Solutions!
+1. Build a central library as an NPM module to share code between our different projects
+2. Precisely define all of our events in this shared library
+3. Write everything in Typescript.
+4. Write tests for as much as possible/reasonable
+5. Run k8s cluster in the cloud and develop on it almost as quickly as local
+6. Introduce a lot of code to handle concurrency issues
+
+Ticketing App
+- Users can list a ticket for an event for sale
+- other users can purchase this Ticket
+- Any user can list tickets for sale and purchase tickets
+- When a user attempts to purchase a ticket, the ticket is 'locked' for 15 minutest. The user has 15 minutes to enter their payment info.
+- While locked, no other user can purchase the ticket. After 15 minutes, the ticket should 'unlock'
+- Ticket prices can be edited if they are not locked
+
+Services 
+auth -> everything related to user signup/signin/signout
+tickets -> Ticket creation/editin. Knows whether a ticket can be updated
+orders -> Order creation/ editing
+expiration -> Watches for orders to be created, cancels them after 15 minutes
+payments -> Handles credit card payments. Cancels orders if payments fails, completes if payment succeeds
+
+running skaffold: skaffold dev
+
+to go off the warning of nginx you just type = thisisunsafe
+
+Remote Dev with skaffold
