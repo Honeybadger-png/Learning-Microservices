@@ -34,3 +34,81 @@ running skaffold: skaffold dev
 to go off the warning of nginx you just type = thisisunsafe
 
 Remote Dev with skaffold
+
+Scenario #1 - We Change a 'Synced' File
+- Your Computer: Change to file listed in 'sync' section -> skaffold -> Update Corresponding file in approrpiate pod -> Google Cloud VM
+Scenario #2 - We Change an 'Unsynced' File
+- Your Computer: Change to file not listed in 'sync' section -> skaffold -> Rebuild image - Google Cloud build -> Updated Image -> Update deployment -> Google cloud VM
+Your Computer
+kubectl -> Context for C #1 -> Cluster #1
+kubectl -> Context for C #2 -> Cluster #2
+
+GCloud SDK creates Context for us and update kubectl in our local machine and teach it how to connect
+to install sdk : cloud.google.com/sdk/docs/quickstarts or search 
+
+Don't want to run Docker at all?
+- Close Docker Desktop
+- Run gcloud components install kubectl
+- RUn gcloud container clusters get-credentials <cluster name>
+
+OK still running Docker?
+- gcloud container clusters get-credentials <cluster name>
+Steps
+- Enable Google Cloud Build
+- Update the skaffold.yaml file to use Google Cloud Build
+- Setup ingress-nginx on our google cloud cluster 
+kubernetes.github.io/ingress-nginx
+- Update our hosts file again to point to the remote cluster
+- Restart Skaffold
+
+commands that we just executed created two things for us. It created first in Ingress Controller.
+Thats the thing that runs inside of our cluster that has some of our routing rules tied to it. But it almost
+created something else.
+It created something called a load balancer.
+So when we go to our host file and we enter in the IP adress, so we actually want to connect to whenever 
+we go to ticketing dev, we want to enter in the IP adress of load balancer.
+To get the IP adress for that load balancer. We are going to look it up on the Google Cloud dashboard.
+
+in other services we can use different languages so when the error occurs they will send different structurized error messages.
+This will cause problem because react app with knowledge of how to parse 30 different kinds or error responses.
+we need to make sure that we send back a identical looking structure any time there is some error that occurs.
+
+we need one single structure for errors because we dont want our react app to have to understand how to parse a billion of errors.
+
+Difficulty in Error Handling
+1- We must have a consistently structered response from all servers, no matter what went wrong.
+solution : Write an error handling middleware to process errors, give them a consistent structure, and send back to the browser.
+2 - A billiong things can go wrong, not just validation of inputs to a request handler. Each of these need to be handled consistently.
+solution: Make sure we capture all possible errors using Express's error handling mechanism( call the 'next' function!)
+
+Because we are extending a built in class in custom error file 
+we write Object.setPrototypeOf(this,RequestValidationError.prototype)
+
+**So, we'll need to update our conditional to add a check for an error of type field and use the new path property:
+
+  if (err instanceof RequestValidationError) {
+    const formattedErrors = err.errors.map((error) => {
+      if (error.type === 'field') {
+        return { message: error.msg, field: error.path };
+      }
+    });
+    return res.status(400).send({ errors: formattedErrors });
+  }
+
+
+**When adding the serializeErrrors function in the next lecture you will see the following error:
+
+[auth] src/errors/request-validation-error.ts(14,3): error TS2416: Property 'serializeErrors' in type 'RequestValidationError' is not assignable to the same property in base type 'CustomError'.
+
+This is caused by the modifications we previously made in regard to express-validator v7.
+
+The function will need a small change to return an object with only the message:
+
+  serializeErrors() {
+    return this.errors.map((err) => {
+      if (err.type === 'field') {
+        return { message: err.msg, field: err.path };
+      }
+      return { message: err.msg };
+    });
+  }

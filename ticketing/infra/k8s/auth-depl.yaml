@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
         - name: auth
-          image: honeybadgerr/auth
+          image: us.gcr.io/ticketing-dev-426515/auth
 ---
 apiVersion: v1 
 kind: Service
