@@ -112,3 +112,14 @@ The function will need a small change to return an object with only the message:
       return { message: err.msg };
     });
   }
+
+  Reminder on abstract classes
+   - Cannot be instantiaed
+   - Used to set up requirements for subclasses
+   - Do create a class when translated to JS , which means we can use it in "instanceof" checks!!!
+
+rather than defining an interface and having our classes implemnt it, we are going to instead define a abstract class called CustomError and we are going to 
+have request validation.
+
+we will install a package named  express-async-errors. if we throw error in async function this package make sure to express listens the function
+  

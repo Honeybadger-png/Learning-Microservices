@@ -1,0 +1,20 @@
+every service will have own mongodb instance.
+
+defatul port for mongo is 27017 so we use this number in yaml file.
+
+steps to handle in auth service
+- Does a user with this email already exist ? if so, respond with error
+- Can't store passwords in plain text! Hash the password the user entered
+- Create a new User and save them to mongoDB 
+- User is now considered to be logged in. Send them a cookie/jwt/something
+
+mongoose and typescript arent a good pairs. 
+if we create a mongoose model and try to pass some other kinds of data to model typescript doesnt complain about it.
+So we fix this problem by creating an interface with the required datas and create an function to return new model with the data implemented by the created interface.
+if we fix it this way we have to export 2 things. to again fix it, we wanted to create like a build in method. We achieved it with adding statics property to the model.
+but, Typescript didnt let us use build method just yet then we created an interface to give more information to typescipt.
+which extend mongoose.Model and contains build method with the attribute types.
+
+for the issue #2 
+issue was when we create a model and console log it we could see extra values.
+first we create another interface ( my understanding is we keep telling typescipt to what to show what we pass as a data, attributes etc.)
