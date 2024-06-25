@@ -9,3 +9,47 @@ Fundamental Option #1.1
 after request to Purchase ticket -> Auth Service:
 Logic to inspect JWT/Cookie and decide if user is authenticated, the send request along to intended destination.
 ->Orders Service
+
+Fundamental Option #2
+individual services know how to authenticate a user
+
+JWT/Cookie is inside of Orders service and it comes after Ticket Purchase Logic.
+So, we dont have any outside dependency.
+there is a big issue. we might need to ban some user to remove his access. in that situation database will be updated but JWT token will be still valid and the user can
+access the services because with this second approach we dont check if the user is authenticated.
+
+Fundemental Option #1:
+- Changes to auth state are immediately reflected
+- Auth service goes down ? Entire app is broken
+
+Fundamental Option #2
+- Auth service is down ? who cares!
+- Some user got banned? Darn, i just gave them keys to my car 5 mins ago...
+we are going with option #2 to stick with the idea of independent services.
+i know we will give some time for jwt to expire.
+and we will add token refresh logic. Probably when we ban some person we will refresh the token so we will solve the problem.
+in the course similar option has gaved. when the user is banned User management logic weill emit userbanned event.
+with this event we can create short-lived in memory cache recording banned users ( dont let this user get acces).
+
+Cookies:                                                           JWT'S
+- Transport Mechanism                                           - Authentication/Authorization Mechanism
+- Moves any kind of data between browser and server             - Stores any data we want
+- Automatically managed by the browser                          - We have to manage it manually
+
+Requirements for Out Auth Mechanism
+- Must be ablte to tell us details about a user
+- Must be able to handle authorization info
+- Must have a built-in, tamper-resistant way to expire or invalidate itself
+- Must be easily understood between different languages
+- Must not require some kind of backing data store on the server
+
+these requirements leads us to use JWT!
+
+Giant Issue! -> The first request cannot be customized in any way
+because we are doing server side rendering and because this first request needs to have authentication information and because we cannot customize that request 
+in any way to try to attach on an additional header or some information inside the body, we have to communicate our JWT inside of a cookie.
+
+we will be using cookie-session.
+
+Creating a Secret
+kubectl create secret generic jwt-secret --from-literal=jwt=asdf
