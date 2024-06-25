@@ -1,0 +1,11 @@
+User auth with microservices is an unsolved proble
+There are many ways to do it and no one wat is 'right'
+we will see a solution that works , but still has downsides.
+
+ Fundamental Option #1 (individual services rely on the auth service)             
+ after Orders Service -> auth Service -> logic to inspect JWT/Cookie and decide if user is authenticated. 
+
+Fundamental Option #1.1
+after request to Purchase ticket -> Auth Service:
+Logic to inspect JWT/Cookie and decide if user is authenticated, the send request along to intended destination.
+->Orders Service

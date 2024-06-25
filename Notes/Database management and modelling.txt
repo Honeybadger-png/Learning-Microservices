@@ -18,3 +18,5 @@ which extend mongoose.Model and contains build method with the attribute types.
 for the issue #2 
 issue was when we create a model and console log it we could see extra values.
 first we create another interface ( my understanding is we keep telling typescipt to what to show what we pass as a data, attributes etc.)
+
+Anytime we attempt to save a document to our database, we are going to execute this pre save function in the model file.
