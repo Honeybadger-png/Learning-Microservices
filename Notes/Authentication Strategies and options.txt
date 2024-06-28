@@ -53,3 +53,29 @@ we will be using cookie-session.
 
 Creating a Secret
 kubectl create secret generic jwt-secret --from-literal=jwt=asdf
+
+We used ! to tell typescript we already check if the key is defined. Because we checked the key in the index file
+
+to refactor the response of user. we add this to the user model:
+{
+  toJSON: {
+    transform(doc,ret){
+      ret.id = ret._id;
+      delete ret._id;
+      delete ret.password;
+      delete ret.__v;
+    }
+  }
+}
+
+instead of copying and pasting error validation seperately we created a function called validate-request and used same logic with error-handler.
+And this new function is used as a middleware.
+
+we will have other service that will need of Middleware to extract the JWT payload and set it on 'req.currentUser',
+Middleware to reject the user is not logged in 
+when we try to set req.currentUser, typescript isn't happy because type definition file says that a request does not have a property of current user.
+if we ever want to modify an existing interface or add in some new properties to it, we just write out the same interface, same exact name,and then
+we add in whatever properties to it, we just write
+
+As for the second middleware:
+the goal of this middleware is to reject any incoming request if the user is not logged in.
