@@ -1,0 +1,74 @@
+-------------
+Scope of testing
+Test a single piece of code in isolatin -> Single middleware (which is known as unit testing).
+Test how different pieces of code work together -> Request flowing through multiple middlewares to a request handler.
+Test how different components work together -> Make request to service, ensure write to database was completed.
+Test how different services work together -> Creating a 'payment' at the 'payments' service should affect the 'orders' service.
+
+Testing Goals
+#1 Basic Request Handling .
+#2 Some tests around models ( we will use more of unit style testing approach).
+#3 Event emitting + receiving. ( we are not going to really worry about this goal for now. we will write some code to make sure that we can receive incoming events. )
+
+How will we run these tests ? 
+We are going to run these tests directly from our terminal without using docker
+- this implies that our local environment is capable of running each service
+- Simple enough now , but more complex projects might make this hard!
+
+when we call npm run test test runner jest library will execute test in our project.
+
+Jest do :
+- Start in-memory copy of MongoDB
+- Start up our express app 
+- User supertest library to make fake requests to our express app
+- Run assertions to make sure the request did the right thing
+
+Ideal Setup
+
+index.js (Code to start up the App and listen on port 3000) -> executed only when we want to run our app in a dev/prod environment.
+app.js (Express App that is not listening on any port).
+Test file (code to test app with supertest).
+we refactored files by separating app and files. basically we just put app part to app and start function stays in the index file.
+
+In the upcoming lecture, we will be adding the --only=prod flag to the npm install instruction of our Dockerfile. This flag no longer exists,
+and we need to use the --omit=dev flag instead.
+
+we install npm install --save-dev @types/jest @types/supertest jest ts-jest supertest mongodb-memory-server (--save-dev flagı koymak elzemdir.)
+!note: we really want to be able to run tests for different services concurrently on the same machine. That might eventually start to be a little challenge if we are having them all connect to the same instance of MongoDB. So rather than having all these different services connecting to the same test instance of Mongo, we're going to instead create a MongoDB memory server or an instance of Mongo in memory.
+For each of these different services we are testing, it's going to end up running much, much more quickly.
+
+if we ever decide to install mre dependencies into our projet or change any other file thats going to cause the image to rebuilt, we will not have to sit around and wait for that 80 megabyte download by writing --omit=dev flag.
+
+we will be setting test environment with MongoMemoryServer. In the latest version code will be like this:
+In auth/src/test/setup.ts :
+mongo = await MongoMemoryServer.create();
+const mongoUri = mongo.getUri();
+-------
+connect method : await mongoose.connect(mongoUri, {});
+-------
+afterAll hook :
+afterAll(async() => {
+  if(mongo){
+    await mongo.stop();
+  }
+  await mongoose.connection.close();
+})
+------
+For reference:
+https://nodkz.github.io/mongodb-memory-server/docs/guides/migration/migrate7/
+
+if we want to write a test around the sign up route handler. We're going to create a folder inside of the routes directory.
+new folder will be __test__. and we will create file like <name>.test.ts we will be using same convention for tests.
+-----
+There are many different ways to define a environment variable in a kind of test environment.
+So we're going to take just a very simple, very direct way. It's not necessarily the best way of doing it, but it's going to get that air to go away right away.
+I'm going to find the for all statements. And inside there, we're just going to directly set the environment variable with a process and JWT key and we'll set it equal to 
+whatever string.
+-----
+Sometimes either jest or ts-test, we dont really know which one is causing issure. Sometimes they dont detect changes that you are making to your files.
+all you got to do for solving it. just restart the test.
+
+my test is failed after setting test to responce and tryting get the setcookie and looking if its defined. Because when we make use of super test, we are not making an HTTPS connection, we are making plain HTTP requests.
+So Cookie Session sees that and it says, Oh, i don't care that I'm in a test environment, I'm only sending cookies if this is a secure request in this case, it's not.
+we will flip the secure option in the cookieSession. it will be secure false if we are in the test.
+and we just done it with checking the node environment by process.env.NODE_ENV !== 'test'.
