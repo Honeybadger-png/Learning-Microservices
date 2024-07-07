@@ -72,3 +72,11 @@ my test is failed after setting test to responce and tryting get the setcookie a
 So Cookie Session sees that and it says, Oh, i don't care that I'm in a test environment, I'm only sending cookies if this is a secure request in this case, it's not.
 we will flip the secure option in the cookieSession. it will be secure false if we are in the test.
 and we just done it with checking the node environment by process.env.NODE_ENV !== 'test'.
+
+while writing test for current user we couldnt get the data of currentuser. Its because of jest dont handle the cookies by default and we cant see the current user.
+
+Element implicitly has an 'any' type because type 'typeof globalThis' has no index signature.ts(7017)
+result code:
+ declare global {
+      var signin: () => Promise<string[]>;
+    }
