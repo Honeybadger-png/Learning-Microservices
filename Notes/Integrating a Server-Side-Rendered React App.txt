@@ -1,0 +1,28 @@
+first of all we dont need to build an image and push it if we are using google cloud.
+
+In the upcoming lecture, we will be creating a next.config.js file and adding some configuration to it. The latest versions of Next.js use a newer version of Webpack which moves watchOptions out from webpackDevMiddleware.
+
+So, the next.config.js file should now look like this:
+
+module.exports = {
+  webpack: (config) => {
+    config.watchOptions.poll = 300;
+    return config;
+  },
+};
+
+sometimes when you change some code or add code to a nextjs file it doesnt reflect to the webpage so we will try to fix it now.
+we created ad next.config.js file and wrote code to tell Webpack that rather than trying to watch for file changes in some automated fashion, instead pull all different files inside of our project directory automatically. still its not 100% foolproof.
+when we created the config file, next does not automatically restart itself so we will do it manually by killing the pod.
+
+global css must be in your custom componant -> https://nextjs.org/docs/messages/css-global
+when we make a request to the next js app:
+- Inspect URL of incoming request. Determine set of components to show
+- Call those components 'getInitialProps' static method
+- Render each component with data from 'getInitialProps' one time
+- Assemble HTML from all components, send back response
+if we ever want to fetch some data with Next JS during the server side rendering process, we are going to define this get initial prop function right here and this is where we can make some async requests.
+
+!!!! hooks are used inside of react components.!!!!!
+when we make request with getInitialProps it makes request in the server side so ingress nginx routes it to containers localhost so there happens the error.
+
