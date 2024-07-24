@@ -26,3 +26,34 @@ if we ever want to fetch some data with Next JS during the server side rendering
 !!!! hooks are used inside of react components.!!!!!
 when we make request with getInitialProps it makes request in the server side so ingress nginx routes it to containers localhost so there happens the error.
 
+we can access services using that 'http://auth-srv' style only when they are in the same namespace.
+
+So if we want to do some cross namespace communication to a service created in a different namespace, we're still going to type out a domain, but the domain is going to be a little bit more compilcated. the domain that we're going to type out will be shown.
+first we need to get the services inside of ingress-nginx:
+******kubectl get services -n ingress-nginx(namespace)
+so we can reach from client to nginx namespace"http://ingress-nginx-controller.ingress-nginx.svc.cluster.local".
+We can also create an 'ExternalName' tyoe service so we can follow the easier pattern. but we are not going to create it.
+
+getInitialProps executed on the server:
+- Hard refresh of page
+- Clicking link from different domain
+- Typing URL into adress bar
+getInitialProps executed on the client
+- Navigating from one page to another while in the app
+when we try to reach ingress-nginx we get error because nginx doesnt know the rules for the domain so we fix it by:
+headers: {
+  Host: 'ticketing.dev'
+}
+
+passing through the cookies:
+- we just basically get the request value and we can pass the req.headers to the request and it can act like a proxy. It works!!!!!
+
+The argumants that are provided to the getInitialProps function for page component are different than the arguments that are provided to get initial props for the custom app component.
+
+context === { req, res } for page component getInitialProps.
+context === { Component, ctx: {req,res}} for Custom App Component getInitialProps.
+
+unfortunately, when we tie get initial props to app component, you get initial functions that we tie to an individiual page do not get automatically invoked anymore.
+here's how we're going to fix this: We are going to get that components get initial prop function and we are going to invoke it manually.
+
+We need to make signout from the component if we dont do it server won't know what do with the cookies
