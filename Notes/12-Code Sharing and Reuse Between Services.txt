@@ -1,0 +1,22 @@
+Next service that will be ticketing service which will:
+- List all tickets
+- Show a particular ticket
+- Create a ticket
+- Edit a ticket
+
+We need to pull some services into a shared library that we are going to then start to use between all of our different services.
+There are more than three ways to share code between projects but we will be focusing on three of them
+#1 Code Sharing Option - Direct Copy Paste
+#2 Code Sharing Option- Git Submodule
+#3 Code Sharing Option - NPM Package (sharing common codes as a npm package !!!! WE WILL USE THIS METHOD)
+
+When we work on our own project that i can work in the future, i can have some very sensitive code inside of it.
+It might contain some very sensitive business logic or something similar. And so before even creating this package, we should think over the security.
+When we publish a package with AMPM, there are really three different options or three very popular options available to us to make this package available to other people inside of our company or the other peope who are working on our project.
+
+We can publish this package to the NPM public registry. 
+We can publish it to the public registry inside of an organization
+Or we can publish it to a private registry.
+
+To publish common:
+we will create git repo
