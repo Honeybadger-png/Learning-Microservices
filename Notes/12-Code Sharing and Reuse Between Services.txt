@@ -37,3 +37,32 @@ We uncomment:
 its very common to want to remove everything inside of the build directory before rebuildint it for that we use del cli with writing "clean": "del ./build/*" script in package json file
 and change build script to first do the clean then run tsc.
 
+there are two option for importing common files such as error which is:
+1- import {BadRequestError} from '@m-gticketing/common/errors/bad-request-error'
+2- import {BadRequestError} from '@m-gticketing/common'
+
+for that purpose we exported all the files in the common index.ts file like:
+export * from './errors/bad-request-error';
+then we build it with tsc but we got errors because we had to install necessary packages that we use in those files.
+then we publish it.
+After that we installed our custom module with the name of the which is m-gtickets/common for me 
+and we fixed importing errors in some of auth files using my custom module
+
+*************---------------------*************
+In the upcoming lecture, we will run a command to update our common module.
+
+As of current versions of NPM, this will require a small change to update the semver values of the package.json.
+
+Instead, we have two options:
+
+npm update --save @YOUR_ORG_NAME/common
+
+or
+
+npm install @YOUR_ORG_NAME/common@latest
+
+Note - remember to replace YOUR_ORG_NAME with your actual NPM organization name.
+
+to look if the correct version is running in the pod
+kubectl exec -it auth-depl-7c94d7b54f-jplcg sh
+
