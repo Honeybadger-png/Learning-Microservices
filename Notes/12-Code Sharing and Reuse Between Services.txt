@@ -20,3 +20,20 @@ Or we can publish it to a private registry.
 
 To publish common:
 we will create git repo
+git add . 
+git commit -m "message"
+npm publist --access public (if it gives error try to login)
+
+!!! There might be differences in our TS settings between the common lib and our services - don't want to deal with that
+- Services might not be written with TS at all!
+- Our common library will be written as Typescript and published as Javascript
+
+To do that we install del-cli and typescript with --save-dev tag then we write build script in package.json
+as "build": "tsc" and we will provide some settings in the tsconfig file.
+We uncomment: 
+-declaration: true ,
+-outDir : write "./build" thats it 
+
+its very common to want to remove everything inside of the build directory before rebuildint it for that we use del cli with writing "clean": "del ./build/*" script in package json file
+and change build script to first do the clean then run tsc.
+
