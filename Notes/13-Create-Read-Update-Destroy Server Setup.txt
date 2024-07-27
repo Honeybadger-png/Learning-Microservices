@@ -1,0 +1,11 @@
+Ticketing Service Overview
+- Create package.json, install deps
+- Write Dockerfile
+- Create index.ts to run project
+- Build image, push to docker hub (don't push the image if you are using google cloud)
+- Write k8s file for deployment, Service
+- Update skaffol.yaml to do file sync for tickets
+- Write k8s file for MongoDB deploymeny, service
+
+!!! It needs to be super careful while writing k8s file because even the little indentation gives error !!!!!!!
+One of the easy way to solve this issue (service is connected to the wrong MongoDB database) is to add in the URL to connect to as an environment variable.
