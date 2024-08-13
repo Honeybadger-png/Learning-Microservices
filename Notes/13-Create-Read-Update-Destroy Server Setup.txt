@@ -9,3 +9,20 @@ Ticketing Service Overview
 
 !!! It needs to be super careful while writing k8s file because even the little indentation gives error !!!!!!!
 One of the easy way to solve this issue (service is connected to the wrong MongoDB database) is to add in the URL to connect to as an environment variable.
+
+we get fail because of the global signin only works for auth service and we shouldnt make reuests to anything else inside of our application whatsoever under any circumstance.
+
+As a reminder, your global signin declaration should look like this after the refactor:
+
+declare global {
+  var signin: () => string[];
+}
+One small fix is required to return the cookie to prevent our tests from failing:
+
+Find the return of the global.signin method and change this:
+
+  return [`express:sess=${base64}`];
+
+to this:
+
+  return [`session=${base64}`];
