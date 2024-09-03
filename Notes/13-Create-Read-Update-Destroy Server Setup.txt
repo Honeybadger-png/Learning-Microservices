@@ -26,3 +26,9 @@ Find the return of the global.signin method and change this:
 to this:
 
   return [`session=${base64}`];
+
+When we try to check if the ticket is not found and throw a custom error but we cant throw custom error because in error handler some different error is happening.
+To debug it we can add console log to the error handler but then we have to make a patch for it because its a common package so here is the tricks:
+It is not really recommended. you do this generally when you have no idea what is going on situations and you have to do some debugging without trying to change some dependency like common and have to redeploy.
+we can add console .log to the file that is in the node_modules.
+well because there is happening something that unpredictible in the error we should make an update for the common module.
