@@ -1,0 +1,72 @@
+in our last application we had built our event bus from scratch and that was that very simple express application.
+just ignore all the services. We are going to focus on the NATS streaming server.
+
+!!!!!!!!!!!!!!! NOTE !!!!!!!!!!!
+In the upcoming lecture, we will start looking at the DockerHub image and documentation of the NATS Streaming Server. You will see a notice of deprecation at the top of the page. This is not currently an issure or concern. When building this coursei we purposely did not choose other services such as RabbitMQ and Kafka. This would have added many, many more hours to the course and required vastly more configuration and setup.
+
+The point of NATs, regardless of its deprecation status was only as a simple way to show how message queus work and nothing more.
+This is a course that teaches concept. It is not a NATS course. Its purpose is not to provide a turn-key production-ready product that can be used for a client or within your organization.
+After this course, you are more than welcome to investigate other message queue systems such as those mentioned above.
+The legacy docs for NATS can be found here:
+https://nats-io.gitbook.io/legacy-nats-docs/nats-streaming-server-aka-stan/developing-with-stan
+
+NATS Streaming Server:
+- Docs at: docs.nats.io
+- NATS and NATS Streaming Server are two different things
+- NATS Streaming implements some extraordinarily important design decisions that will affect our app
+- We are going to run the official 'nats-streaming' docker image in kubernetes. Need to read the image's docs
+
+We are going to use a client library that is specifically designed to work with NATS streaming server. The client library that we're going to use is called Node Nats streaming.
+Technically, even the service that had send it to the event bus, the technically an event or the same event went directly back to the ticket service, which was not super useful.
+So as you guess, no doubt streaming is going to be very different in nature. That streaming is going to require us to subscribe to specific channels.
+
+The NATS Streaming server is going to store all the different events that get emitted in memory by default. However, we can also customize it to store these events inside of flat files stored on a hard drive or even inside of a database like MySQL or Postgres.
+
+we install "node-nats-streaming ts-node-dev typescript @types/node" for nats test project.
+
+Port-forwarding with kubectl:
+kubectl get pods  
+copy the nats pod name 
+kubectl port-forward [pod_name] [port:forwarding_port]
+
+In our publisher and listener model shortly we will publish a data and ticket:created to stan client and then that will pass to the NATS Streaming channels.
+there will be subscription for NATS Streaming events in Listener by that we will get the subscribed events,datas.
+There is a little gotcha around nats, and the gotcha is that we can only essentially share strings or essentially raw data. What we have right here is an object that we want to share, so we cannot share directly a plain JavaScript object. 
+In order to share this or send over the next streaming server, we first have to convert it into JSON.
+
+NOTE!!!!
+- we need to update the publish and listen commands by adding "--rs" to each command.
+
+When we open another listen terminal window it gives error called "clientID already registered". Because we register ids for the clients ex: publisher is abc listener is 123.
+then we ran a second copy of the Order Service, and so it tried to connect to the NATS server with the same cliend ID. NATS server never wants to see a duplicate cliend ID, and that's exactly what we just did.
+
+In the world of Kubernetes, there's going to be a very easy way for us to deal with that.
+But for now, we are just going to say that we're going to randomly generate and ID.
+Now when we invoke an event their info goes to two of the listeners. we dont want it to be happen instead we want to make sure that an incoming event is only going to go to one of them. So how can we do that ?
+We will use queue groups that are going to be created inside of a channel. And every instance of the order service, creates a subscription and joins tat Q group. Then the server is going to take the event and send it off to only one service or potentially only service in randomly or orderly.
+
+Adding queue group is easy we just add the name of the queue grub to the subscription as a second argument.
+
+Some Options that we will care about:
+- setManualAckMode(true) : By setting manual mode to true. The NATS streaming library is no longer going to automatically acknowledge or tell the NATS Streaming library that we have received the vent. And instead it will be up to you and I to run some processing on that event, possibly save some information to the database and then after that entire process is complete. Only after will we then acknowledge the message and say, okay, everything has been processed successfully.
+If we dont add some code to acknowledge the event it waits about a second and sends the events to the next service if still it doesnt get ack it sends again to the service so it continues like that.
+
+We can fix this by adding msg.ack() this will tell the node NATS Streaming library to reach back out to nats streaming server and tell it hey we recived the message and it has been processed.
+
+we are missing some events in listeners.
+The first thing when we put our NATS streaming depl file we actually exposed two different ports. there is one for monitoring port. we also do portforwarding for monitoring port too. and we can reach localhost:8222/streaming we can see some information about our server.
+we can get more detailed information by adding "?subs=1" after clicking subs. and we can see the subscriptions.
+and when we restart a listener we immediatly see one more subscription but we dont get the info then after 30 seconds it understand we dont receive anything so we lose that subscription.
+
+The first thing we can do, we already did. we had arguments of hbi,hbt,hbf. hb stands for hearbeat is like a little request that NATS Streaming server is going to send to all of its different connected clients every so many second. this is purely a little health check.
+hbi: how ofthen that streaming server is going to make a hearbeat request to each of its clients.
+hbt: how long each client has to respond.
+hbf: the number of times that each client can fail before that streaming server is going to assume that that connections is dead and gone.
+
+The second thing that we can do, we are going to write some codes ....
+we will add first handler on the close we will exit the process.
+then down at the very bottom, the file.
+We are going to add in two handlers to watch for any single time that someone tries to close down this process.
+process.on('SIGINT', () => stan.close())
+process.on('SIGTERM', () => stan.close());
+these two will watch on interrupt signals or terminate signals.(these two will not work for windows and it doesn't probably it will work for our main project because kubernetes run on linux based system.)
