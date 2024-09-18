@@ -1,0 +1,21 @@
+Reusable Listener
+Class Listener
+(abstract)Property:subject Type:string Goal: Name of the cahnnel this listener is going to listen to
+(abstract)Property: onMessage Type: (event:EventData)=> void Goal: Function to run when a message is received
+Property:client Type: Stan Goal: Pre-initialized NATS client
+(abstract)Property:queueGroupName Type:string Goal: Name of the queue group this listener will join
+Property: ackWait Type:number Goal: Number of seconds this listener has to ack a message
+Property: subscriptionOptions Type: subscriptionOptions Goal: Default subscription subscriptionOptions
+Property: listen Type: ()=> void Goal: Code to set up the subscription
+Property: parseMessage Type: (msg:Message)=> any Goal: Helper function to parse a message
+
+we cant forget the name of the properties of data or we can make mistakes with client ids so we need to fix that
+we should have always data tied to that event 
+We will Enum type to fix.
+there can be always typos with passing data of client subject and for other data types too.
+So we created a enum with the name subject we include subject names to that enum. Then we created a interface for the ticket created with the subject and the data types.
+We createda a interface for the event to define general event and passed to the listener class "<T extend Event>" then we passed  the event property with "abstract subject:T['subject'];" same for the data.
+Passed the ticketcreated event in the "ticket-created-listener" class "extends Listener<TicketCreatedEvent>" we applied "subject: Subjects.TicketCreated = Subjects.TicketCreated".
+we can update the TicketCreatedListener class with adding readonly to the subject property.
+We will define enum Subjects , Class Listener, interface TicketUpdatedEevent in the common module
+We created a custom promise to make publish event async.
