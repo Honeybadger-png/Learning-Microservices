@@ -70,3 +70,37 @@ We are going to add in two handlers to watch for any single time that someone tr
 process.on('SIGINT', () => stan.close())
 process.on('SIGTERM', () => stan.close());
 these two will watch on interrupt signals or terminate signals.(these two will not work for windows and it doesn't probably it will work for our main project because kubernetes run on linux based system.)
+
+The most important part Section 14 episode 306 !!!!
+we will or might face with concurrency problems in our app. There are solutions for that.
+one of the solution for that is Figure out every possible error case and write code to handle it.
+!well this will not work!
+- An infinite number of things can fail
+- Engineering time = $$$$
+- Does it matter if two tweets are out of order?
+!another solution that will now work!
+- Share state between services of last event processed
+this looks like a good solution but the downside is that it requires to process all the events that comes into the services in essentially a sequential fashion, which has a really big performance penalty.
+
+How to solve concurrency problem:
+- We are working with a poorly designed system and relying on NATS to somehow save us
+- We should revisit the service design
+- If we redesign the system, a better solution to this concurrency stuff will present itself
+-----------
+we will apply a pattern to fix the issue it can be found in episode 310.
+In our ticket app, whenever we create a ticket, we're going to apply a version number to this thing as well. So we're going to say that this is a version one of this record.Then emit an event.So it will probably have a name of something like a ticket created. And then inside the event we'll provide the ID of the ticket. And that will be sent off immediately over to our nats server and then that event will show up inside of our order service.(it shows in the video so i will not all of them here.)
+
+In our test environment:
+We will first delete "'orders-service-queue-group'"
+then we add .setDeliverAllAvailable() option to the subscriptionOptions
+now we'll see that the still running list to right here restarted and it has been sent all of the different events that we have emitted over time.
+It can be look like handy but when we restart our service or maybe we are scaling it up or whatever it is we are going to be re delivered our big list of events after we've been running our application for possibly weeks, months or years.
+So we usually do not use this set deliver all available option by itself.Instead, we're going to use this option along with one other option that's going to give us some more desirable behavior.
+The option we're going to take a look at is something called a durable subscription. A durable subscription is going to be created when we give an identifier to a subscription.
+Maybe service can get offline, we then emit other events two, three. So that service is no longer online to receive this. But internally, NATS is going to keep a record of all the different events that durable sucscription has missed out on. And when the service comes back online NATS is going to look at the durableid name. So it will take two and throw it over and it will take three and throw it over again and they will be marked as processed.
+So a durable subscription is fantastic and making sure that our services never miss out in an event and also make sure that we do not erroneously reprocess events in the future which was kind of the downside of this whole set deliver all available option.
+
+Now we bring back the queue group. By adding the Q group, it's going to make sure that even if we very temporarily disconnect all clients or all subscriptions with this durable name it will not dump the entire durable subscription. So just by adding  on the Q group, even if all of our different services inside this q group go down, NATS is going to persist that durable name subscription.
+
+So we just need to remember thatt for every subscription we create we are probably always going to use setDeliverAllAvailable that w ecan get all the events that have been emitted in the past.
+We're going to use set durable name to make sure that we keep track of all the different events that have gone to this subscription or the queue group even if it goes offline for a little bit. and then finally, we are going to use this Q group to make sure that we do not accidentally dump the durable name, even if all of our services restart for a very brief period of time and to make sure that all these emitted events only go off to one instance of our services, even if we are running multiple instances.
