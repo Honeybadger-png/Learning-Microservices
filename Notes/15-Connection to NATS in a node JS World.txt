@@ -19,3 +19,12 @@ Passed the ticketcreated event in the "ticket-created-listener" class "extends L
 we can update the TicketCreatedListener class with adding readonly to the subject property.
 We will define enum Subjects , Class Listener, interface TicketUpdatedEevent in the common module
 We created a custom promise to make publish event async.
+
+Downside of our common module approach is it will work with Typescript. There are a couple of options. So if you want to have a common definition of all the events, the information inside them, and share it inside of some kind of polyglot architecture, you can take a look at some other alternatives, such as :
+alternatives with Cross Language Support
+- JSON Schema:
+  So you can write your JSON Schema inside of some kinf of common repository. SO maybe a GitHub repo or something like that. So you can easily work with it between different languages.
+- Protobuf:
+  is a way of serializing information, not unlike jSON, but it compacts information into a much more compact format. Protobut can be used to define the structures. It also has cross language support.
+- Apache Avro:
+This is really themed around JAVA in particular, but there is supoort for a variety of different languages as well.
