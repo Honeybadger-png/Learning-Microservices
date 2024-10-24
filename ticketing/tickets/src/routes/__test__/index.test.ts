@@ -1,6 +1,8 @@
 import  request  from "supertest";
 import {app} from '../../app';
 
+
+
 const createTicket = (title:String,price:Number) => {
   return request(app)
   .post('/api/tickets')
