@@ -1,0 +1,26 @@
+We need a order service for ticketing process. So Orders Service will need Ticket( we will just replacate this from Order with ticketId) and Order type of record inside of That Order there will be userId,status,expiresAt,ticketId. 
+
+Orders Service Setup 
+- Duplicate the 'tickets' service (because it is quite similar)
+- Install dependencies
+- Build an image out of the orders service
+- Create a Kubernetes deployment file
+- Set up file sync options in the skaffold.yaml file
+- Set up routing rules in the ingress service
+
+With The new Node 23 images builds are hanging so we change from node section to node:20.18 alpine !!!!!!!!!
+
+We lastly provide routing rules for orders service ( we make sure client service is at the bottom)
+
+Providing custom validator:
+import mongoose and put .custom((input:string)=> mongoose.Types.ObjectId.isValid(input))
+
+We need to somehow associate Tickets and Orders together. There are two primary ways to do this with MongoDB/mongoose.
+1. Embedding - In order we will have userId, status, expiresAt and ticket which there we will embed the ticket property.
+Downside number #1 - Querying is just a bit challenging.
+number #2 - Where do we put an unreserved ticket?
+2. Mongoose Ref/Population Feature _ we will have ticket propert which will have ticket document reference
+
+The need for Enum : we will need to have a system for status to change over processes and if we dont define the status with enum we can make some mistakes like we receive failed payment but we change the status with no payment etc etc.  
+We need a shared and exact definition of the different statuses an order can have !!!!
+We will define a enum OrderStatus in our common library so that we can use the statutes in the correct order.
