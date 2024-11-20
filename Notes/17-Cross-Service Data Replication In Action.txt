@@ -24,3 +24,17 @@ number #2 - Where do we put an unreserved ticket?
 The need for Enum : we will need to have a system for status to change over processes and if we dont define the status with enum we can make some mistakes like we receive failed payment but we change the status with no payment etc etc.  
 We need a shared and exact definition of the different statuses an order can have !!!!
 We will define a enum OrderStatus in our common library so that we can use the statutes in the correct order.
+
+When we create an enum we can also provide it in mongoose with "enum: Object.values(OrderStatus)".
+
+We need another ticket model in our order service to fetch data or play with it. ( We can make these models in our common library and use it in our services definitely we cant do that !) So basically we write the models for the purpose of saving the data to the database correctly.
+
+There is a special usage for mongoose to look at the status if the giving values are equel to the status. we do it by status: { $in: [...](we can also put multiple values)}
+
+If we want to add new method to a document we need to add property to ticketSchema.methods.isReserved = function() {}
+
+globalThis has no index signature TS Error -> https://www.udemy.com/course/microservices-with-node-js-and-react/learn/lecture/27663540#questions
+
+we can throw a todo in our test environment with simply writing it.todo('with a message') cool stuff!!
+
+we want get the order associated with the user and alongside with him the ticket we can chain .populate('ticket') to the end of the order

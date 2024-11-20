@@ -1,0 +1,11 @@
+Order service needs to publish some events so lets hava a look at them
+
+order:created -> 
+- Tickets service needs to be told that one of its tickets has been reserved, and no further edits to that tikcet should be allowed.
+- Payments service needs to know there is a new order that a user might submit a payment for.
+- Expiration service needs to start a 15 minute timer to eventually time out this order.
+order:cancelled ->
+- Tickets service should unreserve a ticket if the corresponding order has been cancelled so this ticket can be edited again
+- Payments should know that any incoming payments for this order should be rejected.
+
+We want expiresAt property string because we will want to convert it to JSON in the future so we define it as a string.
