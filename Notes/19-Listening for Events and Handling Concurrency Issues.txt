@@ -1,1 +1,13 @@
-Deneme yapalım
+We are going to start to put together some number of listeners in these two services. The goal of a listener is to process some number of incoming events inside of both these services, we have to create two different listeners.
+We need ticket:created and ticket:updated  for orders service to listen and order:created and order:updated for tickets service to listen.  
+
+we define queueGroupName because we make sure that we did not have our different servicess all independently processing the same copy of a event at the same time. So instead, the queue group identifier right here is that it is unique for all the different services that are going to create subscriptions inside this channel, number one.
+and number two, it must stay consisten over time.
+
+We need to make sure that we dont make any typos for the queue group name so we need to define it somewhere in a file and import then use it.
+
+We call ack when we have succesfully processed a message or an event and that is a signal to node streaming server that we have processed this event and it doesnt have to worry about trying tp sed it off to another copy of our service again.
+
+So when we create tickets and then we will transmit an event so orders service will get that event and will emit tickets to mongoDB. But whenever we insert a record into MongoDB, it gets assigned a random ID. We will have completely different ids and we wouldnt be able to match those ids. So whenever we are replicating data across services, we want to try to make sure that we are using identical or consistent IDs between them, and that's going to make sure that we can identify these unique record between all these different services.
+
+We can pass the id that comes from data but MongoDB IDs are defines as _id so we have to change the build method inside of our model file.
