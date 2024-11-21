@@ -11,3 +11,20 @@ We call ack when we have succesfully processed a message or an event and that is
 So when we create tickets and then we will transmit an event so orders service will get that event and will emit tickets to mongoDB. But whenever we insert a record into MongoDB, it gets assigned a random ID. We will have completely different ids and we wouldnt be able to match those ids. So whenever we are replicating data across services, we want to try to make sure that we are using identical or consistent IDs between them, and that's going to make sure that we can identify these unique record between all these different services.
 
 We can pass the id that comes from data but MongoDB IDs are defines as _id so we have to change the build method inside of our model file.
+
+In the video one script is created to test. This script is going to try to create a ticket with the price of five. Its then going to update a ticket to a price of ten and then finally update a ticket to a price of 15. And its going to repeat that entire process 200times in a row.
+
+There wasnt any ticket with the price of 10 which shouldnt be. But there is one with 10. So we face with serious concurrency issue. When the script is rerunned we can sometimes get 7,8 so we dont want even one mistake. We need to make sure to implement something for events happen in order.
+
+We are going to add versioning to solve concurrency problem.Thank god Mongoose and MongoDB can manage all of the version stuff for us automatically.
+
+In between saving the document and Mongoose sends an update request Mongoose updates the version field of the document automatically. This entire process that we are going through is referred to as optimistic concurrency control. Plus we can use Optimistic Concurrency Control strategy with any other Databases very easily.
+
+In the video mongoose-update-if-current is being used but probably there are new or better packages now.
+Because we implement changes with the versionKey we need make a change in the doc too.
+
+Test functions cannot both take a 'done' callback and return something Error -> To resolve this, simply remove the done callback fix that was provided.
+We tested out the mongoDB optimistic concurrency control and it works. We basically tried to make two updates and received an error in the second update.
+
+We need to update our common event modules to provide version numbers. But we need to decide when should we increment or include the 'version' number of a record with an event?
+- Increment/include the 'version' number whenever the primary service responsible for a record emits an  event to describe a create/update/destroy to a record
