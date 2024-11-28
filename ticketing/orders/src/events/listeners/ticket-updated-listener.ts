@@ -8,12 +8,12 @@ export class TicketUpdatedListener extends Listener<TicketUpdatedEvent> {
   queueGroupName: string = queueGroupName;
 
   async onMessage(data: TicketUpdatedEvent['data'],message:Message){
-    const ticket = await Ticket.findById(data.id);
+    const ticket = await Ticket.findByEvent(data);
 
     if(!ticket){
       throw new Error('Ticket not found');
     }
-
+    // we just pass the version to the ticket if we want to do versioning without plugin
     const { title , price} = data;
     ticket.set({title,price});
     await ticket.save();
