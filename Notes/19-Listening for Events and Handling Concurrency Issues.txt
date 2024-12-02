@@ -36,3 +36,10 @@ So when we try the app in postman it seems like it works. versioning stuff fixes
 For the versioning we were using Update-If-Current module. We can do the versioning by ourselves because the version may not be increased by one for every environment. First we passed the versions in ticket-updated-listener then we removed the plugin and with the help of pre method and $where we passed the version logic.
 
 To look mongo db kubectl exec -it orders-mongo-depl-854467d756-4vzct mongosh
+
+Now, The order service is publishing order created and order canceled events. We need to make sure that the ticket service is going to have a listener thats going to watch for the order created event and the order canceled event. The reason for this is we need to make sure that we lock down a ticket after an order has been created for it.
+
+By default all tickets will be created with a null value for orderId. So if there is no orderID. that means that the ticket is not reserved and we should allow edits.
+
+We wrap up the natswrapper.client.publish with paranthesis and we pass as jest.Mock this is going to tell Typescript that this is a mock function and lets give it going to then give us access to all the different properties that a mock function has, such as well moch and the calls property.
+//"(natsWrapper.client.publish as jets.Mock).mock.calls[0][1];
