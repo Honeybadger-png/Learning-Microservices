@@ -1,0 +1,10 @@
+There are some options how to create expiration Service.
+#third option in this approach, we could say that whenewer we receive order created will receive that in sight of expiration service and without any delay whatsoever. Like the instant we receive this event, we could publish our own event of expiration complete, but we could attach to that event. When we publish it, we could tell our event bus to not publish this thing for another 15 minutes. so in this case, we'd relying upon our event bus to wait 15 minutes before actually sending out this event to the rest of the world.Unfortunately, nats doesnt support this.
+# option four and that what we are going to do in the app.
+So inside of our expiration service , we're going to make use of a little library called Bull JS. This is a Javascript library that allows us to essentially set up long live timers of sorts or essentially give ourselves notificaitons. It's really a very general purpose framework for allowing us to store some amount of data, do some processing, and possibly have some scheduled aspect to it as well.
+
+We might have an application where a user can make a request with the intent to conver some video file from one format, such as an MP four to another format such as MKV. In order to fulfill it. we need a lot of processing power. 
+
+So when we start to make use of bull, just one additional piece of terminology. we are going to create something called a queue. A queue is essentially the main abstraction inside a BULL. A q represents some series of messages that we want to queue up. and eventually process over time.So we are going to use pull to specifically create a queue.
+
+So once again, we're going to receive an order created event at some point in time. We're going to receive that event and then use this expiration cue thing that we're going to define inside of this file to queue up or create a brand new job.
