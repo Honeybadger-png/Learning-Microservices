@@ -8,3 +8,5 @@ We might have an application where a user can make a request with the intent to 
 So when we start to make use of bull, just one additional piece of terminology. we are going to create something called a queue. A queue is essentially the main abstraction inside a BULL. A q represents some series of messages that we want to queue up. and eventually process over time.So we are going to use pull to specifically create a queue.
 
 So once again, we're going to receive an order created event at some point in time. We're going to receive that event and then use this expiration cue thing that we're going to define inside of this file to queue up or create a brand new job.
+
+Be careful about npm when you try to update the common file sometimes it doesnt uptade the packaga file with correct version dont know why!
