@@ -51,4 +51,12 @@ build:
         manual:
           - dest: .
             src: "src/**/*.ts"
+    - image: honeybadgerr/payments
+      context: payments
+      docker:
+        dockerfile: Dockerfile
+      sync:
+        manual:
+          - dest: .
+            src: "src/**/*.ts"
   

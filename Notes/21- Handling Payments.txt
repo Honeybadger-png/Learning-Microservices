@@ -1,0 +1,20 @@
+------------------Error Fix -----------------------
+Element implicitly has an 'any' type because type 'typeof globalThis' has no index signature.ts(7017)
+
+This is caused by a recent change in the @types/node library which is a dependency of ts-node-dev.
+
+To fix, find the following lines of code in src/test/setup.ts:
+
+declare global {
+  namespace NodeJS {
+    export interface Global {
+      signin(): string[];
+    }
+  }
+}
+change to:
+
+declare global {
+  var signin: (id?: string) => string[];
+}
+------------------- Error Fix --------------------
